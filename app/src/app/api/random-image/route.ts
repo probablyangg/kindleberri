@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
 
 export async function GET() {
   try {
@@ -42,18 +43,18 @@ export async function GET() {
     const imagePath = path.join(imagesDirectory, randomImage);
     const imageBuffer = fs.readFileSync(imagePath);
 
-    // Determine the content type based on file extension
-    const extension = path.extname(randomImage).toLowerCase();
-    const contentType = {
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.gif': 'image/gif',
-      '.webp': 'image/webp'
-    }[extension] || 'application/octet-stream';
+    // Convert image to 8-bit grayscale using sharp
+    const processedImageBuffer = await sharp(imageBuffer)
+      .grayscale()
+      .toColorspace('gray8')
+      .png({ palette: true, colors: 256 })
+      .toBuffer();
 
-    // Return the image with proper headers
-    return new NextResponse(imageBuffer, {
+    // Determine the content type (always PNG for consistent 8-bit output)
+    const contentType = 'image/png';
+
+    // Return the processed image with proper headers
+    return new NextResponse(processedImageBuffer, {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'no-store',
