@@ -46,17 +46,14 @@ export async function GET() {
     // Convert image to 8-bit grayscale using sharp
     const processedImageBuffer = await sharp(imageBuffer)
       .grayscale()
-      .toColorspace('gray8')
-      .png({ palette: true, colors: 256 })
+      .toColourspace('gray8')
+      .png()
       .toBuffer();
-
-    // Determine the content type (always PNG for consistent 8-bit output)
-    const contentType = 'image/png';
 
     // Return the processed image with proper headers
     return new NextResponse(processedImageBuffer, {
       headers: {
-        'Content-Type': contentType,
+        'Content-Type': 'image/png',
         'Cache-Control': 'no-store',
       },
     });
