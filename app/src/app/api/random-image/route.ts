@@ -45,9 +45,10 @@ export async function GET() {
 
     // Convert image to 8-bit grayscale using sharp
     const processedImageBuffer = await sharp(imageBuffer)
+      .png({ quality: 2, compressionLevel: 9 })
       .grayscale()
-      .toColourspace('gray8')
-      .png()
+      .toColourspace('b-w')
+      .removeAlpha()
       .toBuffer();
 
     // Return the processed image with proper headers
