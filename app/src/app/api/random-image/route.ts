@@ -59,7 +59,7 @@ export async function GET() {
         'Cache-Control': 'no-store',
       },
     });
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error:', error);
     return NextResponse.json(
